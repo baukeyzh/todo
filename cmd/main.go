@@ -7,19 +7,20 @@ import (
 	"github.com/baukeyzh/todo/repository"
 	"github.com/baukeyzh/todo/service"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"log"
 )
 
-// main.go или в соответствующих файлах роутинга и контроллеров
 func main() {
 	mongoDb, err := db.ConnectDB()
 	if err != nil {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
+	var validate = validator.New()
 	taskRepo := repository.NewMongoTaskRepository(mongoDb)
 	taskService := service.NewTaskService(taskRepo)
-	taskController := controller.NewTaskController(taskService)
+	taskController := controller.NewTaskController(taskService, validate)
 
 	router := gin.Default()
 
